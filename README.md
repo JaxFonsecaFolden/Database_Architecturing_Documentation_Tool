@@ -1,5 +1,3 @@
 # Database_Architecturing_Documentation_Tool
 
-Main.py
-ProcessMetadata
-Utilities.py
+This *validator tool* supports metadata auditing efforts by automating the validation of documented metadata against the corresponding data available in Dremio. Its primary purpose is to identify inconsistencies between the documentation and the corresponding Dremio records, reducing the effort required for manual validation. These *inconsistencies/errors* are highlighted in the file's output to display exactly where each discrepancy is, and a specified color that corresponds to the type of flag being raised. The tool primarily operates on the *Full Mapping* worksheet, although its configuration-driven design allows for adaptability to evolving business requirements and alternative Excel workbook formats.
