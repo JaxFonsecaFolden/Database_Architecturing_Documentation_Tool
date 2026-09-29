@@ -1,8 +1,8 @@
 import pandas as pd 
 
-from ValidatorTool_Config.MetadataMaps import (
-    error1_map, error2_map, error3_map, 
-    type_conversion, TABLE_PREFIX
+from Tool_Lib.Utilities import (
+    TABLE_PREFIX, TYPE_CONVERSION,
+    ERROR1_MAP, ERROR2_MAP, ERROR3_MAP
 )
 
 class ErrorCodes:
@@ -34,8 +34,8 @@ class ErrorCodes:
         """**Null Value Error.** 
         Contains special rules for *Length* and *Time Zone*. 
         """
-        for col, error_code in error1_map.items():
-            if col == "time zone": 
+        for error_code, col in ERROR1_MAP.items():
+            if error_code == 192: 
                 datatype_mask = (
                     self.metadata["source data type"]
                     .str.contains(r"TIME|MI:SS", case=False, na=False)
@@ -44,7 +44,7 @@ class ErrorCodes:
                 mask = datatype_mask & timezone_null_mask 
 
             # --- Raises & Changes if a length is present in datatype --- 
-            elif col == "length": 
+            elif error_code == 191: 
                 # Extract content inside parenthesis, e.g. VARCHAR(50) -> 50
                 datatype_precision = (
                     self.metadata["source data type"]
@@ -60,21 +60,23 @@ class ErrorCodes:
                 ) 
                 self._add_error_code(mask, error_code)
                 self.metadata.loc[mask, "length"] = datatype_precision[mask]
-                continue  # Skip default _add_error_code call at bottom of loop
 
             # --- Data type can only be flagged if column/field name is present --- 
-            elif col == "source data type": 
-                source_col_present = self.metadata["column/field name"].notna() 
+            elif error_code == 190: 
+                source_col_present = (
+                    self.metadata["column/field name"]
+                    .notna()
+                ) 
                 mask = (
                     self.metadata["source data type"].isna() 
-                    & source_col_present 
+                    & ~source_col_present 
                 )
 
             # --- Flags all other columns --- 
             else: 
                 mask = self.metadata[col].isna() 
 
-            # Apply error code for time zone, source data type, and general columns
+
             self._add_error_code(mask, error_code)
 
     def error2(self): 
@@ -82,7 +84,9 @@ class ErrorCodes:
         Contains special rules dependent on mapping rule, 
         and Source/Target column matching. 
         """
-        for (source_col, target_col), error_code in error2_map.items(): 
+        for error_code, nested_dict in ERROR2_MAP.items():
+            source_col = nested_dict["source_column"]
+            target_col = nested_dict["target_column"]
             if error_code == 201: 
                 # --- For teams with Table/View Naming Convention --- 
                 expected = (TABLE_PREFIX + self.metadata[source_col])
@@ -103,7 +107,7 @@ class ErrorCodes:
                 # Flags only if mapping rule is empty or straight move --- 
                 applicable_rows = (
                     self.metadata["mapping rule"].eq("straight move")
-                        | self.metadata["mapping rule"].isna() 
+                    | self.metadata["mapping rule"].isna() 
                 )
                 source_values = self.metadata[source_col]
                 target_values = self.metadata[target_col]
@@ -113,7 +117,7 @@ class ErrorCodes:
                 )
                 self._add_error_code(mask, error_code)
             # --- Source/Target Datatype Conversion --- 
-            elif error_code == 203: 
+            elif error_code in (203, 204): 
                 source_values = (
                     self.metadata[source_col]
                     .str.replace(r"\(.*?\)", "", regex=True)
@@ -138,7 +142,7 @@ class ErrorCodes:
                     )
                 )
                 # --- Special Business Rule --- 
-                for schema, valid_types in type_conversion.items(): 
+                for schema, valid_types in TYPE_CONVERSION.items(): 
                     # --- Source containing "date" in value --- 
                     if schema == "date": 
                         date_mask = (
@@ -165,7 +169,7 @@ class ErrorCodes:
                     else: 
                         generic_mask = (
                             target_values.eq(schema)
-                            & source_values.isin(valid_types)
+                            & ~source_values.isin(valid_types)
                         )
                         mask = mask | generic_mask
                 self._add_error_code(mask, error_code)
@@ -174,7 +178,7 @@ class ErrorCodes:
         """**Dremio Mismatch Error.** 
         Contains special case handling for missing columns
         """
-        for (map_header, dremio_header), error_code in error3_map.items(): 
+        for error_code, nested_dict in ERROR3_MAP.items(): 
             # --- Target vs Dremio view name --- 
             if error_code == 301: 
                 for path, df in self.dremio.items(): 
@@ -183,6 +187,8 @@ class ErrorCodes:
                         self._add_error_code(mask, error_code)
             # --- Target vs Dremio column name --- 
             elif error_code == 302: 
+                map_header = nested_dict["target_column"]
+                dremio_header = nested_dict["dremio_column"]
                 for path, df in self.dremio.items(): 
                     if df is None: 
                         continue 
@@ -206,6 +212,8 @@ class ErrorCodes:
                         self.data_issues[path] = list(missing_mapping_cols)
             # Target vs Dremio Schema 
             elif error_code == 303: 
+                map_header = nested_dict["target_column"]
+                dremio_header = nested_dict["dremio_column"]
                 for path, df in self.dremio.items():
                     if df is None: 
                         continue 

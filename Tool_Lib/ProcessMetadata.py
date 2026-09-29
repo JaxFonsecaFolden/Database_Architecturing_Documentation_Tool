@@ -7,7 +7,7 @@ import pandas as pd
 
 from Tool_Lib.Formatter import Formatter
 from Tool_Lib.ErrorCodes import ErrorCodes
-from Tool_Config.Utilities import EXPECTED_COLUMNS, COLUMN_STYLES, WORKSHEET
+from Tool_Lib.Utilities import EXPECTED_COLUMNS, COLUMN_STYLES, WORKSHEET
 
 class ProcessMetadata(Formatter, ErrorCodes):
     """
