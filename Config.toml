@@ -25,9 +25,10 @@ timestamp = ["time", "timestamp", "yy-mm-ddhh:mi:ss", "yyyy-mm-ddhh:mi:ss", "hh"
 [Error1]
 101 = "data analyst"
 102 = "mapping status" 
-103 = "release" 
-104 = "mapping remarks" 
 ...
+190 = "column regarding the source data type"
+191 = "column regarding the size/length of source data type"
+192 = "column regarding the regarding the time zone"
 
 # 2. ------Source / Target Mismatch Errors------
 
