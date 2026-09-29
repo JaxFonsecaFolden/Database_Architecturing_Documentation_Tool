@@ -85,7 +85,7 @@ In the current implementation, source tables are expected to map to target views
 - [Utilities.py](Tool_Lib/Utilities.py) `TABLE_PREFIX`
 - [ErrorCodes.py](Tool_Lib/ErrorCodes.py) `def error2() -> Error 201`
 
-## Data Tye Mapping (`type_conversion`)
+## Data Type Mapping (`type_conversion`)
 
 ```toml
 ```
