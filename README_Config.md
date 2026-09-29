@@ -6,8 +6,8 @@ This script is configuration-oriented as a way to adapt to business and team spe
 
 ```toml
 [Error1]
-101 = "column1"
-102 = "column2"
+101 = "data analyst"
+102 = "mapping status" 
 ...
 190 = "column regarding the source data type"
 191 = "column regarding the size/length of source data type"
