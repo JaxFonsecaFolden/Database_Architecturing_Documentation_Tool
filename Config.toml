@@ -1,0 +1,104 @@
+# ----------------General Configs----------------
+
+# ----------------Source/Target View Naming Convenition---------------
+Table_Prefix = "eif_"
+Metadata_Worksheet = "Full Mapping" 
+
+# ------ Datatype Conversions-------
+
+[Type_Conversions]
+array = ["array", "list"]
+character_varying = [
+    "character_varying", "string", 
+    "varchar", "varchar2", "nvarchar", "nvarchar2", 
+    "char", "nchar" nchar2", 
+    "xmltype", "raw", "text", "shorttext", "longtext" 
+]
+boolean = ["boolean", "bool", "string"]
+decimal = ["decimal", "numeric", "money", "bit"]
+integer = ["integer", "smallint", "int", "tinyint", "number", "byteint"]
+timestamp = ["time", "timestamp", "yy-mm-ddhh:mi:ss", "yyyy-mm-ddhh:mi:ss", "hh":mi:ss"]
+
+# -------------Tests/Error Configs---------------
+
+# 1. -----Null Errors------
+[Error1]
+101 = "data analyst"
+102 = "mapping status" 
+103 = "release" 
+104 = "mapping remarks" 
+...
+
+# 2. ------Source / Target Mismatch Errors------
+
+[Error2.201]
+source_column = "input table or file name" 
+target_column = "target table/file name" 
+
+[Error2.202]
+source_column = "column/field name" 
+target_column = "target column name" 
+
+[Error2.203]
+source_column = "source data target" 
+target_column = "dremio schema" 
+
+[Error2.204]
+source_column = "target data type" 
+target_column = "dremio schema" 
+
+# 3. ------ Target / Dremio Mismatch Errors ------
+
+[Error3.301]
+view_column = "dremio view path" 
+path_column = "Target Table/File Name" 
+
+[Error3.302]
+target_column = "target column name" 
+dremio_column = "column name" 
+
+...
+
+# -----------------Formatting Configs----------
+
+# -------Workbook Schema Colors---------
+
+[HeaderColors_Hex]
+ORANGE = "F7C7AC" 
+GREY = "C0C0C0" 
+DARKORANGE = "E97132" 
+BLUE = "44B3E1" 
+
+# ---Hex Highlughts of Each Test/Error Type---
+
+[ErrorColors.1]
+color = "FFCCC"
+description = "Null Value Error" 
+
+[ErrorColors.2]
+color = "F2CEEF" 
+description = "Source vs Target Data Mismatch" 
+
+[ErrorColors.3]
+color = "C0E6F5"
+description = "Source vs Dremio Mismatch" 
+
+# ---Table Styles---
+#   -> 1    black 
+#   -> 2    navy bluish 
+#   -> 3    light orange 
+#   -> 4    dark green 
+#   -> 5    light blue 
+#   -> 6    purple 
+#   -> 7    light green 
+
+[TableStyles]
+ExtraErrors = "TableStyleMedium2" 
+Metadata = "" 
+
+[ColumnStyles]
+Upper = [
+    "release", "project name", "source system type",
+    "target type", "target server", "dremio schema" 
+]
+Title = ["data analyst", "mapping status"]
