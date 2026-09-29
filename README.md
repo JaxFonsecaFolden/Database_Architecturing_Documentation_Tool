@@ -71,6 +71,8 @@ Users who are color-blind or color-sensitive can use the `-c` / `--colorblind` a
 
 The validator reports metadata ingestion and Dremio view ingestion issues through terminal notifications. Users can use the `-d` / `--details` argument to suppress specific categories of output when a large number of notifications are generated. To suppress a category, users usimply specify th eoptions that correlate to which notifications they want to receive. Available options that correlate to which notifications they want to receive. Available options are `c=column checker`, `d=Dremio views`, and `f=failed files summary`. Multiple options may be dcombined, with or without commas, depending on the desired level of output. The `f` option controls the terminal summary of failed files. In most cases, it is recommended to either suppress both `c` and `d` notifications together or suppress only `f` to reduce terminal noise while maintaining useful validation feedback.
 
+<br><br>
+
 # Requirements/File(s) Handling
 
 ### Failed Files
